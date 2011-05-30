@@ -3,7 +3,11 @@ import tornado.web
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write("<img src='https://github.com/drahmel/PDQueue/blob/master/pdq-logo.png?raw=true' /><br/>PDQueue Started")
+    	f = open('index.html','r')
+    	page = f.read()
+    	f.close()
+    	#"<img src='https://github.com/drahmel/PDQueue/blob/master/pdq-logo.png?raw=true' /><br/>PDQueue Started"
+        self.write(page)
 
 application = tornado.web.Application([
     (r"/", MainHandler),
