@@ -1,0 +1,25 @@
+h1. PDQueue
+
+!pdq-logo.png(PDQueue logo)!
+
+h2. What is this?
+
+Combining the best of cron jobs and queues for infinite flexibility
+
+* Python-based
+** Runable on every major platform -- Mac, Linux, Windows
+* Built on top of Tornado
+** Takes advantage of long polling
+* Jobs queue-able through HTTP/REST
+* Web accessible
+* Cron daemon injects jobs into queues at specified times
+* Extensible
+* HTTP-based makes
+** APIs simple to build
+** Jobs addable through JavaScript/Ajax
+* Telnet interface possible through Python
+* Memcache-like client-based pooling
+* Blackout periods
+* Throttling (tasks per sec/min/day)
+
+
