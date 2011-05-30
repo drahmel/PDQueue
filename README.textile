@@ -8,16 +8,16 @@ Combining the best of cron jobs and queues for infinite flexibility
 
 * Python-based
 ** Runable on every major platform -- Mac, Linux, Windows
-* Built on top of Tornado
-** Takes advantage of long polling
-** Large number of connections
-* Jobs queue-able through HTTP/REST
-* Web accessible
-* Cron daemon injects jobs into queues at specified times
-* Extensible
-* HTTP-based makes
+* HTTP-based protocol
+** Jobs queue-able through HTTP/REST
 ** APIs simple to build
 ** Jobs addable through JavaScript/Ajax
+** Web accessible
+* Cron daemon injects jobs into queues at specified times
+* Built on top of FriendFeed's Tornado
+** Takes advantage of long polling
+** Large number of connections
+* Extensible
 * Telnet interface possible through Python
 * Memcache-like client-based pooling
 * Blackout periods
