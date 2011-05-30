@@ -1,6 +1,6 @@
 h1. PDQueue
 
-!pdq-logo.png(PDQueue logo)!
+!https://github.com/drahmel/PDQueue/blob/master/pdq-logo.png?raw=true(PDQueue logo)!
 
 h2. What is this?
 
@@ -10,6 +10,7 @@ Combining the best of cron jobs and queues for infinite flexibility
 ** Runable on every major platform -- Mac, Linux, Windows
 * Built on top of Tornado
 ** Takes advantage of long polling
+** Large number of connections
 * Jobs queue-able through HTTP/REST
 * Web accessible
 * Cron daemon injects jobs into queues at specified times
