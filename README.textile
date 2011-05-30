@@ -1,6 +1,6 @@
 h1. PDQueue
 
-!https://github.com/drahmel/PDQueue/blob/master/pdq-logo.png?raw=true(PDQueue logo)!
+!https://github.com/drahmel/PDQueue/blob/master/static/images/pdq-logo.png?raw=true(PDQueue logo)!
 
 h2. What is this?
 
