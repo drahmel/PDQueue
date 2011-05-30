@@ -1,5 +1,6 @@
 MANIFEST.in
 README
+setup.cfg
 setup.py
 demos/appengine/README
 demos/appengine/app.yaml
