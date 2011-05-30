@@ -8,6 +8,7 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import unicodedata
+import memcache
 
 from tornado.options import define, options
 
@@ -27,11 +28,15 @@ class Application(tornado.web.Application):
 			cookie_secret="11oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo="
 		)
 		tornado.web.Application.__init__(self, handlers, **settings)
+		self.mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+
 
 class BaseHandler(tornado.web.RequestHandler):
 	@property
 	def db(self):
-		pass
+		return self.application.db
+	def mc(self):
+		return self.application.mc
 
 class HomeHandler(BaseHandler):
 	def get(self):
@@ -42,12 +47,26 @@ class HomeHandler(BaseHandler):
 		self.write(page)
 class JobHandler(BaseHandler):
 	def get(self,jobname):
-		self.write('Info on job:'+jobname)
+		mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+		mkey = 'job_access_'+str(jobname)
+		mc.add(mkey, "1")
+		total = mc.incr(mkey)
+
+		mkey = 'job_'+str(jobname)
+		job_info = mc.get(mkey)
+		self.write('Info on job: <b>'+str(jobname)+'</b> has '+str(total)+' accesses')
+		if(len(job_info)>0):
+			self.write('<hr/>'+str(job_info)+'<hr/>')
 		self.write('<html><body><form action="/job/'+jobname+'" method="post">'
 				   '<input type="text" name="message">'
 				   '<input type="submit" value="Submit">'
 				   '</form></body></html>')
+		
+
 	def post(self,jobname):
+		mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+		mkey = 'job_'+str(jobname)
+		mc.set(mkey, self.get_argument("message"))
 		self.set_header("Content-Type", "text/plain")
 		self.write("You posted " + self.get_argument("message")+" to job "+jobname)
 
