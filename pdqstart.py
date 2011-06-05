@@ -10,6 +10,7 @@ import tornado.web
 import unicodedata
 
 from Cache import *
+from c import *
 
 from tornado.options import define, options
 
@@ -70,15 +71,6 @@ class JobHandler(BaseHandler):
 		self.set_header("Content-Type", "text/plain")
 		self.write("You posted " + self.get_argument("message")+" to job "+jobname)
 		
-
-# Config class
-class c(object):
-	settings = None
-	@staticmethod
-	def init():
-		if c.settings is None:
-			pass
-			#Load ini file
 			
 def cronCheck():
 	mkey = "cron_check"
