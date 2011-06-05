@@ -8,7 +8,8 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import unicodedata
-import memcache
+
+from Cache import *
 
 from tornado.options import define, options
 
@@ -35,8 +36,6 @@ class BaseHandler(tornado.web.RequestHandler):
 	@property
 	def db(self):
 		return self.application.db
-	def mc(self):
-		return self.application.mc
 
 class HomeHandler(BaseHandler):
 	def get(self):
@@ -45,20 +44,17 @@ class HomeHandler(BaseHandler):
 		f.close()
 		#"<img src='https://github.com/drahmel/PDQueue/blob/master/pdq-logo.png?raw=true' /><br/>PDQueue Started"
 		self.write(page)
-		mc.init()
 		mkey = "cron_check"
-		cronCheckCount = mc.mc.get(mkey)
+		cronCheckCount = Cache.get(mkey)
 		self.write("Current # of cronChecks: "+str(cronCheckCount))
 		
 class JobHandler(BaseHandler):
 	def get(self,jobname):
-		mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 		mkey = 'job_access_'+str(jobname)
-		mc.add(mkey, "1")
-		total = mc.incr(mkey)
+		total = Cache.inc(mkey)
 
 		mkey = 'job_'+str(jobname)
-		job_info = mc.get(mkey)
+		job_info = Cache.get(mkey)
 		self.write('Info on job: <b>'+str(jobname)+'</b> has '+str(total)+' accesses')
 		if(len(job_info)>0):
 			self.write('<hr/>'+str(job_info)+'<hr/>')
@@ -69,26 +65,24 @@ class JobHandler(BaseHandler):
 		
 
 	def post(self,jobname):
-		mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 		mkey = 'job_'+str(jobname)
-		mc.set(mkey, self.get_argument("message"))
+		Cache.set(mkey, self.get_argument("message"))
 		self.set_header("Content-Type", "text/plain")
 		self.write("You posted " + self.get_argument("message")+" to job "+jobname)
 		
-class mc(object):
-	mc = None
-	
+
+# Config class
+class c(object):
+	settings = None
 	@staticmethod
 	def init():
-		if mc.mc is None:
-			mc.mc = memcache.Client(['127.0.0.1:11211'], debug=0)
-			print "Init mc"
+		if c.settings is None:
+			pass
+			#Load ini file
 			
 def cronCheck():
-	mc.init()
 	mkey = "cron_check"
-	mc.mc.add(mkey,"1")
-	total = mc.mc.incr(mkey)
+	total = Cache.inc(mkey)
 	#print total
 
 def main():
@@ -97,7 +91,8 @@ def main():
 	http_server.listen(options.port)
 	tInstance = tornado.ioloop.IOLoop.instance()
 	# Add cronCheck callback to check cron schedule every minute
-	scheduler = tornado.ioloop.PeriodicCallback(cronCheck, 60000, io_loop=tInstance)
+	checkmilli = 60000
+	scheduler = tornado.ioloop.PeriodicCallback(cronCheck, checkmilli, io_loop=tInstance)
 	# Start scheduler
 	scheduler.start()
 	# Start Tornado
