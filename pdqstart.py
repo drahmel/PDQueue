@@ -96,8 +96,8 @@ def main():
 	http_server = tornado.httpserver.HTTPServer(Application())
 	http_server.listen(options.port)
 	tInstance = tornado.ioloop.IOLoop.instance()
-	# Add cronCheck callback to periodically check cron schedule
-	scheduler = tornado.ioloop.PeriodicCallback(cronCheck, 1000, io_loop=tInstance)
+	# Add cronCheck callback to check cron schedule every minute
+	scheduler = tornado.ioloop.PeriodicCallback(cronCheck, 60000, io_loop=tInstance)
 	# Start scheduler
 	scheduler.start()
 	# Start Tornado
