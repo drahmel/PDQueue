@@ -8,6 +8,7 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import unicodedata
+import time, random
 
 from Cache import *
 from c import *
@@ -21,6 +22,7 @@ class Application(tornado.web.Application):
 		handlers = [
 			(r"/", HomeHandler),
 			(r"/job/([0-9a-zA-Z_]+)", JobHandler),
+			(r"/longpoll/([0-9a-zA-Z_]+)", LongPollHandler),
 
 		]
 		settings = dict(
@@ -71,7 +73,20 @@ class JobHandler(BaseHandler):
 		self.set_header("Content-Type", "text/plain")
 		self.write("You posted " + self.get_argument("message")+" to job "+jobname)
 		
-			
+class LongPollHandler(BaseHandler):
+	def get(self,polltype):
+		if(polltype=='send'):
+			items = ["Item 1", "Item 2", "Item 3"]
+			random.shuffle(items)
+			pollitem = items[0]
+			self.render("longpoll.html", title="Long Polling example", items=items, pollitem=pollitem)
+		else:
+			time.sleep(10)
+			items = ["cheese", "bacon", "sausage", "pineapple", "pepperoni", "extra sauce"]
+			random.shuffle(items)
+			pollitem = items[0]
+			self.write('{"type":"'+str(pollitem)+'"}')
+
 def cronCheck():
 	mkey = "cron_check"
 	total = Cache.inc(mkey)
